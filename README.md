@@ -4,6 +4,7 @@ Static personal/CV website. Zero build step, zero runtime dependencies — plain
 
 **Live:** https://jolly-sand-04e6b4510.3.azurestaticapps.net
 **Repo:** https://github.com/ajvaldesg/cv-site (public)
+**Local path:** `C:\OpenClawSandbox\cv-site` (WSL: `/mnt/c/OpenClawSandbox/cv-site`)
 **Hosting:** Azure Static Web Apps, Free tier (`jv-cv-site` · `rg-cv-site` · Central US), CI/CD via GitHub Actions on every push to `main`.
 
 ## Privacy
@@ -97,7 +98,7 @@ The counter/message writes need `STORAGE_CONNECTION_STRING` in `api/local.settin
 ## Local preview
 
 ```bash
-cd projects/cv-site
+cd /mnt/c/OpenClawSandbox/cv-site      # Windows: C:\OpenClawSandbox\cv-site
 python3 -m http.server 8080
 # http://localhost:8080
 ```

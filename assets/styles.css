@@ -745,6 +745,15 @@ li { list-style: none; }
   .tradeoff-table tr { border-bottom: 1px solid var(--line); padding: 8px 0; }
 }
 
+
+.diagram-hint { display: none; font-size: .74rem; color: var(--text-muted); margin: 8px 2px 0; }
+
+@media (max-width: 760px) {
+  .diagram-card { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .diagram-card svg { min-width: 580px; }
+  .diagram-hint { display: block; }
+}
+
 @media print {
   @page { margin: 14mm 12mm; }
 

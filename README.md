@@ -2,6 +2,14 @@
 
 Static personal/CV website. Zero build step, zero runtime dependencies — plain HTML, CSS and JavaScript.
 
+**Live:** https://jolly-sand-04e6b4510.3.azurestaticapps.net
+**Repo:** https://github.com/ajvaldesg/cv-site (private)
+**Hosting:** Azure Static Web Apps, Free tier (`jv-cv-site` · `rg-cv-site` · Central US), CI/CD via GitHub Actions on every push to `main`.
+
+## Privacy
+
+Email is public (as intended). Phone numbers are **not** in the HTML: each one ships base64-encoded in a `data-phone` attribute and is only turned into a `tel:` link when the visitor clicks *Show … phone*. Scrapers that look for `tel:` links or digit patterns find nothing. Phone buttons are hidden when printing to PDF.
+
 ## Structure
 
 ```

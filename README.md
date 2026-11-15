@@ -17,7 +17,6 @@ Email is public (as intended). Phone numbers are **not** in the HTML: each one s
 index.html                     # single-page CV
 engineering/index.html         # "how this site is built" (architecture + ADRs)
 cases/                         # three architecture case studies (index + 3 sub-pages)
-cases/                         # three architecture case studies + index
 assets/styles.css              # design system, layout, print styles
 assets/app.js                  # theme, scroll reveal, print, live badges, contact form
 assets/favicon.svg             # inline SVG favicon

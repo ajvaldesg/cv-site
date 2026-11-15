@@ -3,7 +3,7 @@
 Static personal/CV website. Zero build step, zero runtime dependencies — plain HTML, CSS and JavaScript.
 
 **Live:** https://jolly-sand-04e6b4510.3.azurestaticapps.net
-**Repo:** https://github.com/ajvaldesg/cv-site (private)
+**Repo:** https://github.com/ajvaldesg/cv-site (public)
 **Hosting:** Azure Static Web Apps, Free tier (`jv-cv-site` · `rg-cv-site` · Central US), CI/CD via GitHub Actions on every push to `main`.
 
 ## Privacy
@@ -13,13 +13,86 @@ Email is public (as intended). Phone numbers are **not** in the HTML: each one s
 ## Structure
 
 ```
-index.html                  # single-page site
-assets/styles.css           # design system + layout + print styles
-assets/app.js               # theme toggle, scroll reveal, print button
-assets/favicon.svg          # inline SVG favicon
-staticwebapp.config.json    # Azure Static Web Apps: routes, security headers, CSP
-.github/workflows/…         # CI/CD to Azure Static Web Apps
+index.html                     # single-page CV
+engineering/index.html         # "how this site is built" (architecture + ADRs)
+assets/styles.css              # design system, layout, print styles
+assets/app.js                  # theme, scroll reveal, print, live badges, contact form
+assets/favicon.svg             # inline SVG favicon
+api/                           # Azure Functions (Node 20, v4 model)
+  package.json · host.json
+  src/index.js                 # /api/health · /api/visits · /api/contact
+infra/main.bicep               # Table Storage + Application Insights (+ tables)
+staticwebapp.config.json       # routing, CSP, security headers, api runtime
+.github/workflows/…            # build + deploy on push to main
 ```
+
+## Architecture
+
+```
+Browser ──► Azure Static Web Apps (edge CDN, TLS, CSP)
+              ├── "/" and "/engineering"  → static files
+              └── "/api/*"                → managed Azure Functions (Node 20)
+                                             ├── Azure Table Storage (counters, messages)
+                                             └── Application Insights (requests, traces)
+GitHub Actions ── build + deploy on push to main (frontend + API)
+Bicep ─────────── storage account, tables and App Insights
+```
+
+| Endpoint | Method | Purpose |
+|---|---|---|
+| `/api/health` | GET | liveness: runtime, region, uptime, integration flags |
+| `/api/visits` | GET | increments + returns the visit counter |
+| `/api/contact` | POST | validates and stores `{name, email, message}` |
+
+All endpoints are same-origin and anonymous — no keys, no CORS preflight. The site
+degrades gracefully: if the API or storage is unavailable, pages still render and the
+badge says so.
+
+## Infrastructure
+
+`infra/main.bicep` creates the storage account (Standard_LRS, TLS 1.2, no public blob
+access), the `counters` and `messages` tables, and the Application Insights component.
+It never outputs secrets. Deploy:
+
+```bash
+az deployment group create -g rg-cv-site -n cv-site-infra -f infra/main.bicep
+az staticwebapp appsettings set -n jv-cv-site -g rg-cv-site --setting-names \
+  "STORAGE_CONNECTION_STRING=…" "APPLICATIONINSIGHTS_CONNECTION_STRING=…" "REGION_NAME=centralus"
+```
+
+The Static Web App itself (`jv-cv-site`, Free) is created once with
+`az staticwebapp create`; everything after that is code.
+
+## Monitoring
+
+- Application Insights: every function invocation, latency and dependency call (30-day retention).
+- Metric alert `alert-cv-site-5xx`: edge 5xx ratio > 5% over 15 min → email via action group `ag-cv-site`.
+- On-page live badge: real `GET /api/health` timing plus the visit counter.
+- **No standard web test on purpose:** billed at $0.00056/execution; a 4-region,
+  5-minute ping test would cost ~$19/month. The metric alert costs $0.10/month and
+  covers the same failure mode.
+
+## Cost
+
+| Resource | Monthly |
+|---|---|
+| Static Web Apps (Free) | $0.00 |
+| Managed Functions (included with SWA) | $0.00 |
+| Table Storage (LRS, < 1 MB) | < $0.01 |
+| Application Insights (well under 5 GB free grant) | $0.00 |
+| Metric alert rule (1) | $0.10 |
+| **Total** | **≈ $0.10 / month** |
+
+## Local development with the API
+
+```bash
+cd api && npm install && npm start   # requires Azure Functions Core Tools
+# In another shell: npx @azure/static-web-apps-cli start . --api-location api
+```
+
+The counter/message writes need `STORAGE_CONNECTION_STRING` in `api/local.settings.json`
+(git-ignored). Without it, `/api/health` still answers and `/api/contact` returns a clear
+`storage_not_configured` error.
 
 ## Local preview
 

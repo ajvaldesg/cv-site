@@ -176,7 +176,13 @@
           <p class="adr-why">Why: the primary job of this site is to be readable. Telemetry niceties must never be able to take the content down.</p>
         </div>
         <div class="adr">
-          <h3>ADR-05 · Secrets out of the repo</h3>
+          <h3>ADR-05 · Cost discipline: no paid web tests</h3>
+          <p class="adr-decision">Availability is watched through an edge 5xx metric alert (≈$0.10/month), not a synthetic ping test.</p>
+          <p class="adr-why">Why: standard web tests bill $0.00056 per execution — four regions every five minutes is ~34,000 executions and ~$19/month for a site that costs pennies. The metric alert covers the same failure mode for a tenth of a dollar.</p>
+        </div>
+
+        <div class="adr">
+          <h3>ADR-06 · Secrets out of the repo</h3>
           <p class="adr-decision">Deployment token lives in GitHub Actions secrets; the storage key lives in Static Web App app settings. The repo is public and contains neither.</p>
           <p class="adr-why">Why: a portfolio repo is meant to be read. Anything that must stay private stays out of it — and Bicep is written so no secret ever lands in deployment output.</p>
         </div>
@@ -195,8 +201,9 @@
           <div class="endpoint"><span class="method">POST</span><span>/api/contact</span><span class="desc">validates and stores a message (name, email, message)</span></div>
         </div>
         <p class="diagram-caption" style="margin-top:14px">
-          Observability: every invocation emits traces to Application Insights (30-day retention) — failures,
-          latency and dependency calls included.
+          Observability: every invocation emits requests and dependencies to Application Insights (30-day retention),
+          and an Azure Monitor metric alert emails me if the edge 5xx ratio passes 5% over 15 minutes.
+          The badge above is a real round-trip to <code>/api/health</code>, not a decorative label.
         </p>
       </div>
       <div class="eng-card">

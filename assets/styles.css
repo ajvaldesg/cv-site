@@ -428,7 +428,19 @@ li { list-style: none; }
 .contact-phones a { color: var(--text-soft); }
 .contact-phones a:hover { color: var(--accent); }
 
+.contact-phones-label {
+  width: 100%;
+  margin: 0 0 -2px;
+  font-size: .74rem;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
 .phone-reveal {
+  width: 100%;
+  max-width: 340px;
+  text-align: center;
   font: inherit;
   font-size: .82rem;
   color: var(--text-soft);

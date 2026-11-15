@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Case 01 — Enterprise data integration in a regulated utility | Jonathan Valdes</title>
+<meta name="description" content="Architecture case study: hybrid vendor, on-premises and Azure data integration in a regulated utility, with isolated DEV/QA/UAT/PROD environments and more than 2 TB processed daily." />
+<meta name="author" content="Jonathan Valdes" />
+<meta name="theme-color" content="#0b2545" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="/assets/styles.css" />
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml" />
+</head>
+<body>
+
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="site-header" id="top">
+  <div class="wrap header-inner">
+    <a class="brand" href="/">
+      <span class="brand-mark">JV</span>
+      <span class="brand-text">Jonathan Valdes</span>
+    </a>
+    <nav class="nav" aria-label="Section navigation">
+      <a href="/#profile">Profile</a>
+      <a href="/#experience">Experience</a>
+      <a href="/cases" aria-current="page">Case studies</a>
+      <a href="/engineering">Engineering</a>
+      <a href="/#contact" class="nav-cta">Contact</a>
+      <button class="theme-toggle" id="themeToggle" type="button" aria-label="Toggle color theme" title="Toggle theme">
+        <svg class="icon-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><g stroke-linecap="round"><line x1="12" y1="2.2" x2="12" y2="4.6"/><line x1="12" y1="19.4" x2="12" y2="21.8"/><line x1="2.2" y1="12" x2="4.6" y2="12"/><line x1="19.4" y1="12" x2="21.8" y2="12"/><line x1="5.1" y1="5.1" x2="6.8" y2="6.8"/><line x1="17.2" y1="17.2" x2="18.9" y2="18.9"/><line x1="18.9" y1="5.1" x2="17.2" y2="6.8"/><line x1="6.8" y1="17.2" x2="5.1" y2="18.9"/></g></svg>
+        <svg class="icon-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.2 14.6A8.4 8.4 0 0 1 9.4 3.8a8.6 8.6 0 1 0 10.8 10.8z"/></svg>
+      </button>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+
+  <section class="case-hero">
+    <div class="wrap">
+      <p class="section-kicker">Case 01 · Data platform</p>
+      <h1>Hybrid data integration inside a regulated utility</h1>
+      <p class="case-lede">
+        Integrating vendor, on-premises and Azure data in an environment where the network is not open, the
+        change process is slow by design, and every environment must look exactly like production before code
+        is allowed near it.
+      </p>
+      <div class="case-meta">
+        <span>Regulated utility</span>
+        <span>Hybrid: vendor · on-premises · Azure</span>
+        <span>2 TB+ per day</span>
+        <span>DEV · QA · UAT · PROD</span>
+      </div>
+
+      <div class="fact-grid">
+        <div class="fact"><span class="fact-num">2 TB+</span><span class="fact-label">processed daily</span></div>
+        <div class="fact"><span class="fact-num">4</span><span class="fact-label">isolated environments</span></div>
+        <div class="fact"><span class="fact-num">Design · Build · Test</span><span class="fact-label">planning owned end to end</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="case-section">
+    <div class="wrap case-body">
+      <h2>Context and constraints</h2>
+      <p>
+        The data lived in three places that could not be merged and could not be moved at will: vendor systems
+        outside the organisation's control, on-premises systems inside the operational network, and an Azure
+        estate that had to remain the governed target. In a regulated utility, the constraint list comes before
+        the technology list:
+      </p>
+      <p>
+        inbound network access does not get opened for convenience; secrets do not live in code or configuration
+        files; production is not available for experiments; and the evidence trail for change is part of the
+        deliverable. Any design that ignored those four points would have been technically valid and organisationally
+        undeliverable.
+      </p>
+    </div>
+  </section>
+
+  <section class="case-section">
+    <div class="wrap">
+      <h2>Target architecture</h2>
+      <div class="diagram-card">
+        <svg viewBox="0 0 660 470" role="img" aria-labelledby="c1t c1d">
+          <title id="c1t">Hybrid integration architecture</title>
+          <desc id="c1d">Vendor and on-premises sources reach Azure through a self-hosted Integration Runtime inside the private network; Azure Data Factory orchestrates, Azure Functions processes events and Blob Storage holds landing and staging data, all secured with Key Vault, RBAC and NSGs across four isolated environments, deployed from GitHub Actions.</desc>
+          <defs>
+            <marker id="a1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path d="M0 0 L10 5 L0 10 z" fill="#0078d4"/>
+            </marker>
+            <style>
+              .b { fill: #ffffff; stroke: #cbd5e1; stroke-width: 1.2; }
+              .b-az { fill: #e8f1fb; stroke: #0078d4; }
+              .b-sec { fill: #f5f7fb; stroke: #cbd5e1; stroke-dasharray: 3 3; }
+              .t { font: 600 11px Inter, sans-serif; fill: #10192b; }
+              .s { font: 8.8px "JetBrains Mono", monospace; fill: #7a869a; }
+              .grp { fill: none; stroke: #cbd5e1; stroke-width: 1.2; stroke-dasharray: 5 5; }
+              .grp-t { font: 600 8.6px "JetBrains Mono", monospace; fill: #7a869a; letter-spacing: .09em; }
+              .l { stroke: #0078d4; stroke-width: 1.4; fill: none; marker-end: url(#a1); }
+              .l-d { stroke: #7a869a; stroke-width: 1.2; stroke-dasharray: 4 4; fill: none; marker-end: url(#a1); }
+              .env { fill: #ffffff; stroke: #cbd5e1; stroke-width: 1; }
+              .env-t { font: 600 8.4px "JetBrains Mono", monospace; fill: #4a5568; }
+            </style>
+          </defs>
+
+          <!-- private network -->
+          <rect class="grp" x="6" y="232" width="308" height="118" rx="12"/>
+          <text class="grp-t" x="18" y="250">PRIVATE NETWORK · NSG BOUNDARY</text>
+
+          <rect class="b" x="14" y="262" width="120" height="58" rx="9"/>
+          <text class="t" x="74" y="288" text-anchor="middle">On-premises</text>
+          <text class="s" x="74" y="304" text-anchor="middle">operational systems</text>
+
+          <rect class="b" x="162" y="262" width="142" height="58" rx="9"/>
+          <text class="t" x="233" y="284" text-anchor="middle">Self-hosted</text>
+          <text class="t" x="233" y="298" text-anchor="middle">Integration Runtime</text>
+          <text class="s" x="233" y="313" text-anchor="middle">outbound only</text>
+
+          <rect class="b" x="14" y="70" width="120" height="58" rx="9"/>
+          <text class="t" x="74" y="96" text-anchor="middle">Vendor / SaaS</text>
+          <text class="s" x="74" y="112" text-anchor="middle">external systems</text>
+
+          <!-- azure -->
+          <rect class="grp" x="352" y="16" width="300" height="438" rx="14"/>
+          <text class="grp-t" x="366" y="34">AZURE · RBAC · KEY VAULT</text>
+
+          <rect class="b b-az" x="370" y="54" width="264" height="60" rx="9"/>
+          <text class="t" x="502" y="80" text-anchor="middle">Azure Data Factory</text>
+          <text class="s" x="502" y="97" text-anchor="middle">orchestration · scheduling · monitoring</text>
+
+          <rect class="b b-az" x="370" y="140" width="264" height="60" rx="9"/>
+          <text class="t" x="502" y="166" text-anchor="middle">Azure Functions</text>
+          <text class="s" x="502" y="183" text-anchor="middle">event-driven processing</text>
+
+          <rect class="b b-az" x="370" y="226" width="264" height="60" rx="9"/>
+          <text class="t" x="502" y="252" text-anchor="middle">Blob Storage</text>
+          <text class="s" x="502" y="269" text-anchor="middle">landing · staging</text>
+
+          <rect class="b b-sec" x="370" y="306" width="264" height="44" rx="9"/>
+          <text class="t" x="502" y="333" text-anchor="middle">Key Vault · RBAC · NSG policy</text>
+
+          <rect class="env" x="370" y="368" width="60" height="26" rx="6"/><text class="env-t" x="400" y="385" text-anchor="middle">DEV</text>
+          <rect class="env" x="438" y="368" width="60" height="26" rx="6"/><text class="env-t" x="468" y="385" text-anchor="middle">QA</text>
+          <rect class="env" x="506" y="368" width="60" height="26" rx="6"/><text class="env-t" x="536" y="385" text-anchor="middle">UAT</text>
+          <rect class="env" x="574" y="368" width="60" height="26" rx="6"/><text class="env-t" x="604" y="385" text-anchor="middle">PROD</text>
+
+          <!-- cicd -->
+          <rect class="b" x="162" y="392" width="142" height="54" rx="9"/>
+          <text class="t" x="233" y="415" text-anchor="middle">GitHub · Actions</text>
+          <text class="s" x="233" y="431" text-anchor="middle">versioned deployment</text>
+
+          <!-- links -->
+          <path class="l" d="M136 291 L158 291"/>
+          <path class="l" d="M136 100 L252 100 L252 236 L366 236" opacity="0"/>
+          <path class="l" d="M136 100 C220 100 240 84 366 84"/>
+          <path class="l" d="M306 274 C338 274 344 120 366 100"/>
+          <path class="l" d="M502 114 L502 136"/>
+          <path class="l" d="M566 114 C620 114 620 200 566 222"/>
+          <path class="l" d="M566 200 L566 222"/>
+          <path class="l-d" d="M306 419 L348 419"/>
+        </svg>
+        <div class="diagram-legend">
+          <span><i></i> Data path</span>
+          <span><i class="dash"></i> Deployment path</span>
+          <span>Dashed boxes = trust boundaries</span>
+        </div>
+      </div>
+      <p class="diagram-caption">
+        The private network never accepts inbound connections from Azure: the self-hosted Integration Runtime
+        reaches outward, so connectivity exists without opening the operational perimeter. Everything inside the
+        Azure boundary is reached through RBAC, with secrets brokered by Key Vault rather than stored in pipelines.
+      </p>
+    </div>
+  </section>
+
+  <section class="case-section">
+    <div class="wrap">
+      <h2>Decisions and trade-offs</h2>
+      <div class="decision-list">
+
+        <div class="decision">
+          <h3>Self-hosted Integration Runtime instead of network exposure</h3>
+          <p>
+            On-premises sources are reached through a runtime that lives inside the private network and initiates
+            outbound connections. The perimeter stays closed and the security team does not have to approve a new
+            inbound path for every source added later.
+          </p>
+          <p><strong>Accepted cost:</strong> a component to host, patch and monitor on the customer side, and a
+            dependency on that host's availability for every pipeline that touches it.</p>
+          <div class="tag-row"><span>Security</span><span>Connectivity</span><span>Operability</span></div>
+        </div>
+
+        <div class="decision">
+          <h3>Metadata-driven orchestration over bespoke pipelines</h3>
+          <p>
+            Azure Data Factory is used as the control plane: sources, targets and schedules are described rather than
+            hand-coded per integration, so onboarding a new vendor feed is a configuration exercise instead of a new
+            project.
+          </p>
+          <p><strong>Accepted cost:</strong> more design effort up front and a framework that must be maintained —
+            worth it the moment the second and third source arrive.</p>
+          <div class="tag-row"><span>Scalability</span><span>Maintainability</span></div>
+        </div>
+
+        <div class="decision">
+          <h3>Event-driven processing in Functions, batch movement in Data Factory</h3>
+          <p>
+            Movement and transformation are separated by trigger type: scheduled batch in Data Factory, reactive
+            handling in Azure Functions. Each workload gets the execution model that fits it instead of forcing
+            everything through one tool.
+          </p>
+          <p><strong>Accepted cost:</strong> two runtimes to observe, and the need for clear ownership of what
+            happens where when a pipeline fails mid-flight.</p>
+          <div class="tag-row"><span>Reliability</span><span>Separation of concerns</span></div>
+        </div>
+
+        <div class="decision">
+          <h3>Four isolated environments, including a separate UAT</h3>
+          <p>
+            DEV, QA, UAT and PROD are separated so that vendor integration and business sign-off happen against an
+            environment that reflects production, not against a developer's approximation of it.
+          </p>
+          <p><strong>Accepted cost:</strong> four times the configuration surface and a promotion path that must be
+            disciplined, or drift appears between environments and the UAT signal becomes worthless.</p>
+          <div class="tag-row"><span>Governance</span><span>Risk</span><span>Regulated change</span></div>
+        </div>
+
+        <div class="decision">
+          <h3>Secrets in Key Vault, authorisation through RBAC</h3>
+          <p>
+            Connection details are resolved at runtime from Key Vault, and access to data and orchestration is granted
+            by role rather than by embedded credentials. Rotation stops being a code change.
+          </p>
+          <p><strong>Accepted cost:</strong> identity and access work moves earlier in the delivery cycle, and every
+            role assignment becomes something to review.</p>
+          <div class="tag-row"><span>Security</span><span>Auditability</span></div>
+        </div>
+
+      </div>
+
+      <table class="tradeoff-table">
+        <thead>
+          <tr><th>Decision</th><th>What was given up</th><th>Why it was still right</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Runtime inside the private network</td>
+            <td>Simplicity of a fully cloud-hosted connector</td>
+            <td>Kept the operational perimeter closed while still reaching on-premises sources</td>
+          </tr>
+          <tr>
+            <td>Configuration-driven pipelines</td>
+            <td>Speed on the first integration</td>
+            <td>Volume and source count make repeatability more valuable than one-off speed</td>
+          </tr>
+          <tr>
+            <td>Four environments</td>
+            <td>Infrastructure and configuration overhead</td>
+            <td>Regulated change needs a production-like sign-off environment</td>
+          </tr>
+          <tr>
+            <td>Separation of secrets from code</td>
+            <td>Fewer moving parts at deploy time</td>
+            <td>Rotation and audit become operational tasks instead of releases</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="case-section">
+    <div class="wrap case-body">
+      <h2>Governance, security and scale</h2>
+      <p>
+        <strong>Security was structural, not additive.</strong> NSGs define what can talk to what, RBAC defines who
+        can do what, and Key Vault holds what must never be written down. None of those three is a step at the end of
+        the pipeline.
+      </p>
+      <p>
+        <strong>Governance followed the environment model.</strong> With DEV, QA, UAT and PROD separated, promotion
+        is an explicit, reviewable act, and test evidence is produced against an environment that looks like the one
+        that will run in production.
+      </p>
+      <p>
+        <strong>Scale shaped the design, not the other way round.</strong> More than two terabytes a day means the
+        architecture has to assume partial failure as normal: a run that dies halfway must be restartable, staging
+        must be durable, and monitoring has to answer "which source, which window, which environment" without a
+        person reconstructing it from logs.
+      </p>
+      <p>
+        <strong>Ownership covered the whole delivery path.</strong> Design, build and test planning were owned
+        together — which is what keeps an integration architecture honest, because the test strategy exposes the
+        decisions that looked elegant on a diagram.
+      </p>
+
+      <h2 style="margin-top:28px">What this case demonstrates</h2>
+      <p>
+        Designing under constraint: connectivity you cannot open, environments you must replicate, secrets you cannot
+        store, and a volume that makes failure handling a first-class concern. The result is an integration platform
+        that the security and operations functions can accept — which is the only definition of "done" that survives
+        contact with a regulated business.
+      </p>
+      <p class="note-inline">
+        Scope note: the figures shown (2 TB+ daily, four environments, ownership of design, build and test planning)
+        are the ones recorded for this engagement. No cost, team-size or timeline figures are asserted here.
+      </p>
+
+      <p class="case-nav">
+        <a href="/cases">← All case studies</a>
+        <a href="/cases/enterprise-content-identity">Case 02: content &amp; identity →</a>
+      </p>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="wrap footer-inner">
+    <p class="footer-name">Jonathan Valdes <span class="muted">— Azure Cloud Architect, Data &amp; AI Engineer</span></p>
+    <p class="footer-stack">Azure Static Web Apps · managed Functions · Table Storage · Application Insights · Bicep · GitHub Actions.</p>
+    <p class="footer-meta">
+      <span class="footer-live">
+        <span class="live-badge" data-state="unknown"><span class="live-dot" aria-hidden="true"></span><span class="live-copy">API · checking…</span></span>
+        <span class="visits-copy">visits · —</span>
+        <a href="/engineering">How this site is built</a>
+      </span>
+    </p>
+  </div>
+</footer>
+
+<script src="/assets/app.js" defer></script>
+</body>
+</html>

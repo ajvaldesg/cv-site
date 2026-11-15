@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Case 02 — Enterprise content and identity consolidation | Jonathan Valdes</title>
+<meta name="description" content="Architecture case study: consolidating NAS, file server and Dropbox content into SharePoint Online and Azure file services, with federated Active Directory and Okta identity and centralised governance." />
+<meta name="author" content="Jonathan Valdes" />
+<meta name="theme-color" content="#0b2545" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="/assets/styles.css" />
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml" />
+</head>
+<body>
+
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="site-header" id="top">
+  <div class="wrap header-inner">
+    <a class="brand" href="/">
+      <span class="brand-mark">JV</span>
+      <span class="brand-text">Jonathan Valdes</span>
+    </a>
+    <nav class="nav" aria-label="Section navigation">
+      <a href="/#profile">Profile</a>
+      <a href="/#experience">Experience</a>
+      <a href="/cases" aria-current="page">Case studies</a>
+      <a href="/engineering">Engineering</a>
+      <a href="/#contact" class="nav-cta">Contact</a>
+      <button class="theme-toggle" id="themeToggle" type="button" aria-label="Toggle color theme" title="Toggle theme">
+        <svg class="icon-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><g stroke-linecap="round"><line x1="12" y1="2.2" x2="12" y2="4.6"/><line x1="12" y1="19.4" x2="12" y2="21.8"/><line x1="2.2" y1="12" x2="4.6" y2="12"/><line x1="19.4" y1="12" x2="21.8" y2="12"/><line x1="5.1" y1="5.1" x2="6.8" y2="6.8"/><line x1="17.2" y1="17.2" x2="18.9" y2="18.9"/><line x1="18.9" y1="5.1" x2="17.2" y2="6.8"/><line x1="6.8" y1="17.2" x2="5.1" y2="18.9"/></g></svg>
+        <svg class="icon-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.2 14.6A8.4 8.4 0 0 1 9.4 3.8a8.6 8.6 0 1 0 10.8 10.8z"/></svg>
+      </button>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+
+  <section class="case-hero">
+    <div class="wrap">
+      <p class="section-kicker">Case 02 · Content &amp; identity</p>
+      <h1>Consolidating 125 terabytes without breaking how people work</h1>
+      <p class="case-lede">
+        File shares, NAS appliances and Dropbox had accumulated into a content estate that nobody could govern,
+        because nobody could see all of it. The consolidation had to move the data, keep the experience intact,
+        and make identity the single control point.
+      </p>
+      <div class="case-meta">
+        <span>Enterprise content consolidation</span>
+        <span>SharePoint Online · Azure file services</span>
+        <span>Active Directory · Okta · SAML</span>
+        <span>Hybrid sync &amp; tiering</span>
+      </div>
+
+      <div class="fact-grid">
+        <div class="fact"><span class="fact-num">125 TB+</span><span class="fact-label">content in scope</span></div>
+        <div class="fact"><span class="fact-num">16</span><span class="fact-label">site collections</span></div>
+        <div class="fact"><span class="fact-num">2</span><span class="fact-label">source estates: NAS / file servers and Dropbox</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="case-section">
+    <div class="wrap case-body">
+      <h2>Context and constraints</h2>
+      <p>
+        This was not a migration problem with a size attached; it was a governance problem with a migration attached.
+        Content lived on NAS devices and file servers, and in Dropbox, with permissions inherited from file-system
+        ACLs and from personal sharing decisions. Every month without consolidation meant another month of content
+        nobody could classify, retain or delete with confidence.
+      </p>
+      <p>
+        The constraints were organisational as much as technical: users had to keep finding their files where they
+        expected them, identity had to remain one identity per person across on-premises and cloud, the cloud target
+        had to be governed centrally, and the whole thing had to be delivered in a way that could be explained to
+        people whose daily work was being restructured.
+      </p>
+    </div>
+  </section>
+
+  <section class="case-section">
+    <div class="wrap">
+      <h2>Target architecture</h2>
+      <div class="diagram-card">
+        <svg viewBox="0 0 700 470" role="img" aria-labelledby="c2t c2d">
+          <title id="c2t">Content and identity consolidation architecture</title>
+          <desc id="c2d">NAS, file servers and Dropbox content is placed by a hybrid synchronisation and tiering layer into SharePoint Online across sixteen site collections, with cold content tiered to Azure file services. Active Directory and Okta form a single identity plane with SAML federation and centralised governance.</desc>
+          <defs>
+            <marker id="a2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path d="M0 0 L10 5 L0 10 z" fill="#0078d4"/>
+            </marker>
+            <marker id="a2g" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path d="M0 0 L10 5 L0 10 z" fill="#7a869a"/>
+            </marker>
+            <style>
+              .b { fill: #ffffff; stroke: #cbd5e1; stroke-width: 1.2; }
+              .b-c { fill: #e8f1fb; stroke: #0078d4; }
+              .b-id { fill: #f5f7fb; stroke: #cbd5e1; }
+              .t { font: 600 11px Inter, sans-serif; fill: #10192b; }
+              .s { font: 8.8px "JetBrains Mono", monospace; fill: #7a869a; }
+              .grp { fill: none; stroke: #cbd5e1; stroke-width: 1.2; stroke-dasharray: 5 5; }
+              .grp-t { font: 600 8.6px "JetBrains Mono", monospace; fill: #7a869a; letter-spacing: .09em; }
+              .l { stroke: #0078d4; stroke-width: 1.4; fill: none; marker-end: url(#a2); }
+              .l-g { stroke: #7a869a; stroke-width: 1.2; stroke-dasharray: 4 4; fill: none; marker-end: url(#a2g); }
+              .l-g2 { stroke: #7a869a; stroke-width: 1.2; stroke-dasharray: 4 4; fill: none; marker-start: url(#a2g); marker-end: url(#a2g); }
+            </style>
+          </defs>
+
+          <!-- identity plane -->
+          <rect class="grp" x="12" y="14" width="676" height="76" rx="12"/>
+          <text class="grp-t" x="24" y="32">IDENTITY &amp; GOVERNANCE PLANE</text>
+
+          <rect class="b b-id" x="28" y="42" width="170" height="38" rx="8"/>
+          <text class="t" x="113" y="66" text-anchor="middle">Active Directory</text>
+
+          <rect class="b b-id" x="502" y="42" width="170" height="38" rx="8"/>
+          <text class="t" x="587" y="66" text-anchor="middle">Okta</text>
+
+          <path class="l-g2" d="M202 61 L498 61"/>
+          <text class="s" x="350" y="55" text-anchor="middle">SAML federation</text>
+          <text class="s" x="350" y="76" text-anchor="middle">single identity across on-premises and cloud</text>
+
+          <!-- sources -->
+          <rect class="b" x="12" y="146" width="146" height="58" rx="9"/>
+          <text class="t" x="85" y="171" text-anchor="middle">NAS / file servers</text>
+          <text class="s" x="85" y="188" text-anchor="middle">file-system ACLs</text>
+
+          <rect class="b" x="12" y="286" width="146" height="58" rx="9"/>
+          <text class="t" x="85" y="311" text-anchor="middle">Dropbox</text>
+          <text class="s" x="85" y="328" text-anchor="middle">personal &amp; team sharing</text>
+
+          <!-- sync / tiering -->
+          <rect class="b b-c" x="190" y="192" width="168" height="98" rx="9"/>
+          <text class="t" x="274" y="222" text-anchor="middle">Hybrid sync</text>
+          <text class="t" x="274" y="238" text-anchor="middle">&amp; tiering</text>
+          <text class="s" x="274" y="258" text-anchor="middle">policy-driven placement</text>
+          <text class="s" x="274" y="274" text-anchor="middle">active vs. cold content</text>
+
+          <!-- targets -->
+          <rect class="b" x="392" y="118" width="264" height="98" rx="9"/>
+          <text class="t" x="524" y="148" text-anchor="middle">SharePoint Online</text>
+          <text class="s" x="524" y="167" text-anchor="middle">16 site collections</text>
+          <text class="s" x="524" y="183" text-anchor="middle">125 TB+ consolidated</text>
+          <text class="s" x="524" y="199" text-anchor="middle">governed collaboration</text>
+
+          <rect class="b" x="392" y="264" width="264" height="80" rx="9"/>
+          <text class="t" x="524" y="292" text-anchor="middle">Azure file services</text>
+          <text class="s" x="524" y="311" text-anchor="middle">cold content tier</text>
+          <text class="s" x="524" y="327" text-anchor="middle">retained, not abandoned</text>
+
+          <!-- links: content -->
+          <path class="l" d="M158 175 C176 175 178 210 186 216"/>
+          <path class="l" d="M158 315 C176 315 178 280 186 268"/>
+          <path class="l" d="M358 220 C376 220 378 186 388 178"/>
+          <path class="l" d="M358 262 C376 262 378 292 388 298"/>
+
+          <!-- links: identity -->
+          <path class="l-g" d="M587 80 L587 114"/>
+          <path class="l-g" d="M664 80 L664 304 L660 304"/>
+        </svg>
+        <div class="diagram-legend">
+          <span><i></i> Content path</span>
+          <span><i class="dash"></i> Identity / authorisation</span>
+          <span>Dashed boxes = control plane</span>
+        </div>
+      </div>
+      <p class="diagram-caption">
+        Content is placed by policy rather than copied wholesale: active material lands in SharePoint Online, cold
+        material is tiered to Azure file services. Identity is not duplicated — Active Directory and Okta are joined
+        by SAML so one person has one identity, and governance is applied once, centrally, instead of per repository.
+      </p>
+    </div>
+  </section>
+
+  <section class="case-section">
+    <div class="wrap">
+      <h2>Decisions and trade-offs</h2>
+      <div class="decision-list">
+
+        <div class="decision">
+          <h3>Hybrid synchronisation and tiering instead of a one-way migration</h3>
+          <p>
+            Content is synchronised and tiered by policy: what people work on stays where collaboration works best,
+            and what is rarely touched moves to cheaper storage without leaving the governed estate.
+          </p>
+          <p><strong>Accepted cost:</strong> a synchronisation layer to own and explain, plus the operational
+            discipline of keeping placement rules aligned with how the business actually uses content.</p>
+          <div class="tag-row"><span>Cost</span><span>Continuity</span><span>Operability</span></div>
+        </div>
+
+        <div class="decision">
+          <h3>Sixteen site collections as an information architecture, not a technical artefact</h3>
+          <p>
+            Site collections were used as the boundary that matches the organisation: permissions, retention and
+            ownership can be reasoned about per collection instead of as one undifferentiated terabyte pool.
+          </p>
+          <p><strong>Accepted cost:</strong> more governance objects to administer, and a design that must be
+            maintained as the organisation changes.</p>
+          <div class="tag-row"><span>Governance</span><span>Security</span></div>
+        </div>
+
+        <div class="decision">
+          <h3>One identity plane: Active Directory and Okta federated with SAML</h3>
+          <p>
+            Rather than duplicating accounts per platform, identity is federated. Access to cloud content follows
+            the identity the person already has, which makes joiner/mover/leaver a single decision instead of three.
+          </p>
+          <p><strong>Accepted cost:</strong> a dependency on federation availability and correctness — when it breaks,
+            it breaks for everyone at once.</p>
+          <div class="tag-row"><span>Identity</span><span>Security</span><span>Operability</span></div>
+        </div>
+
+        <div class="decision">
+          <h3>Centralised governance over per-repository administration</h3>
+          <p>
+            Retention, permissions and ownership are decided centrally and applied consistently. The value is not
+            tidiness: it is being able to answer "who can see this, and why is it still here?" without a project.
+          </p>
+          <p><strong>Accepted cost:</strong> central decisions move slower than local ones, and the central model has
+            to remain responsive enough that teams do not route around it.</p>
+          <div class="tag-row"><span>Governance</span><span>Risk</span><span>Scale</span></div>
+        </div>
+
+      </div>
+
+      <table class="tradeoff-table">
+        <thead>
+          <tr><th>Decision</th><th>What was given up</th><th>Why it was still right</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Sync and tiering instead of a clean cut-over</td>
+            <td>A simpler, single-step migration story</td>
+            <td>Users keep working during transition, and cold content is not paid for at premium rates</td>
+          </tr>
+          <tr>
+            <td>Structure split across 16 site collections</td>
+            <td>Administrative simplicity of one container</td>
+            <td>Governance and permissions stay comprehensible at 125 TB+</td>
+          </tr>
+          <tr>
+            <td>Federated identity</td>
+            <td>Independence from a single authentication path</td>
+            <td>One identity per person, centrally revocable</td>
+          </tr>
+          <tr>
+            <td>Centralised governance</td>
+            <td>Local team autonomy</td>
+            <td>Consistent retention and access decisions across the whole estate</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="case-section">
+    <div class="wrap case-body">
+      <h2>Governance, security and scale</h2>
+      <p>
+        <strong>Identity was the security boundary.</strong> With one federated identity, access decisions stop being
+        replicated across systems; deprovisioning a person is one action with one expectation of completeness.
+      </p>
+      <p>
+        <strong>Governance had to survive the migration.</strong> The temptation in a consolidation is to move first
+        and classify later. That produces a cloud estate that is larger but no more governable than the file shares
+        it replaced — so retention and ownership were part of the target model, not a phase two.
+      </p>
+      <p>
+        <strong>Scale changed the risk profile.</strong> At more than 125 terabytes across sixteen site collections,
+        a mistake in a placement rule is not a support ticket; it is content under the wrong retention class
+        or the wrong permission scope. The architecture had to make the safe path the default one.
+      </p>
+
+      <h2 style="margin-top:28px">What this case demonstrates</h2>
+      <p>
+        Treating content consolidation as an identity and governance problem first, and a storage problem second.
+        The deliverable was not "files in SharePoint" — it was a governed estate where access, retention and ownership
+        can be answered centrally, and where users did not have to relearn their jobs to comply with it.
+      </p>
+      <p class="note-inline">
+        Scope note: 125 TB+, sixteen site collections and the source estates are the recorded figures for this
+        engagement. No cost, headcount or timeline figures are asserted.
+      </p>
+
+      <p class="case-nav">
+        <a href="/cases/enterprise-data-integration">← Case 01: data integration</a>
+        <a href="/cases/enterprise-platform-consolidation">Case 03: platform consolidation →</a>
+      </p>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="wrap footer-inner">
+    <p class="footer-name">Jonathan Valdes <span class="muted">— Azure Cloud Architect, Data &amp; AI Engineer</span></p>
+    <p class="footer-stack">Azure Static Web Apps · managed Functions · Table Storage · Application Insights · Bicep · GitHub Actions.</p>
+    <p class="footer-meta">
+      <span class="footer-live">
+        <span class="live-badge" data-state="unknown"><span class="live-dot" aria-hidden="true"></span><span class="live-copy">API · checking…</span></span>
+        <span class="visits-copy">visits · —</span>
+        <a href="/engineering">How this site is built</a>
+      </span>
+    </p>
+  </div>
+</footer>
+
+<script src="/assets/app.js" defer></script>
+</body>
+</html>

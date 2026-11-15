@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Architecture case studies — Jonathan Valdes</title>
+<meta name="description" content="Three enterprise architecture case studies: hybrid data integration in a regulated utility, enterprise content and identity consolidation, and platform consolidation across 25 redundant servers." />
+<meta name="author" content="Jonathan Valdes" />
+<meta name="theme-color" content="#0b2545" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="/assets/styles.css" />
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml" />
+</head>
+<body>
+
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="site-header" id="top">
+  <div class="wrap header-inner">
+    <a class="brand" href="/">
+      <span class="brand-mark">JV</span>
+      <span class="brand-text">Jonathan Valdes</span>
+    </a>
+    <nav class="nav" aria-label="Section navigation">
+      <a href="/#profile">Profile</a>
+      <a href="/#experience">Experience</a>
+      <a href="/cases" aria-current="page">Case studies</a>
+      <a href="/engineering">Engineering</a>
+      <a href="/#contact" class="nav-cta">Contact</a>
+      <button class="theme-toggle" id="themeToggle" type="button" aria-label="Toggle color theme" title="Toggle theme">
+        <svg class="icon-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><g stroke-linecap="round"><line x1="12" y1="2.2" x2="12" y2="4.6"/><line x1="12" y1="19.4" x2="12" y2="21.8"/><line x1="2.2" y1="12" x2="4.6" y2="12"/><line x1="19.4" y1="12" x2="21.8" y2="12"/><line x1="5.1" y1="5.1" x2="6.8" y2="6.8"/><line x1="17.2" y1="17.2" x2="18.9" y2="18.9"/><line x1="18.9" y1="5.1" x2="17.2" y2="6.8"/><line x1="6.8" y1="17.2" x2="5.1" y2="18.9"/></g></svg>
+        <svg class="icon-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.2 14.6A8.4 8.4 0 0 1 9.4 3.8a8.6 8.6 0 1 0 10.8 10.8z"/></svg>
+      </button>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+
+  <section class="case-hero">
+    <div class="wrap">
+      <p class="section-kicker">Selected work</p>
+      <h1>Three architecture problems, three sets of trade-offs.</h1>
+      <p class="case-lede">
+        Each case is written the way the decision actually had to be made: what the environment allowed,
+        what was chosen, what was deliberately given up, and how governance and security held it together.
+        Diagrams show the target architecture, not the implementation.
+      </p>
+      <p class="note-inline">
+        Every figure on these pages comes from the original engagement. Nothing is rounded up,
+        extrapolated or estimated — if a number is not here, it was not part of the record.
+      </p>
+    </div>
+  </section>
+
+  <section class="case-section">
+    <div class="wrap">
+      <div class="case-cards">
+
+        <a class="case-card" href="/cases/enterprise-data-integration">
+          <span class="case-kicker">Case 01 · Data platform</span>
+          <h3>Enterprise data integration in a regulated utility</h3>
+          <p>Hybrid integration spanning vendor, on-premises and Azure systems, with strict environment separation and full ownership of design, build and test planning.</p>
+          <span class="case-foot">2 TB+ processed daily · DEV / QA / UAT / PROD</span>
+        </a>
+
+        <a class="case-card" href="/cases/enterprise-content-identity">
+          <span class="case-kicker">Case 02 · Content &amp; identity</span>
+          <h3>Enterprise content and identity consolidation</h3>
+          <p>Consolidating NAS, file server and Dropbox content into a governed cloud estate, with federated identity across Active Directory and Okta.</p>
+          <span class="case-foot">125 TB+ · 16 site collections · centralised governance</span>
+        </a>
+
+        <a class="case-card" href="/cases/enterprise-platform-consolidation">
+          <span class="case-kicker">Case 03 · Platform</span>
+          <h3>Enterprise collaboration platform consolidation</h3>
+          <p>Redesigning a multi-server collaboration estate into a consolidated topology, with governance and reliability as design constraints rather than afterthoughts.</p>
+          <span class="case-foot">250+ web applications · 25 redundant servers</span>
+        </a>
+
+      </div>
+    </div>
+  </section>
+
+  <section class="case-section">
+    <div class="wrap">
+      <div class="case-body">
+        <h2>How to read these</h2>
+        <p>
+          <strong>Context first.</strong> In a regulated environment the architecture is often decided by what is
+          <em>not</em> allowed — egress rules, identity boundaries, change control, evidence requirements — before
+          any product choice is made.
+        </p>
+        <p>
+          <strong>Trade-offs are explicit.</strong> Every case ends with what was accepted in exchange for the
+          decision: blast radius, latency, operational overhead, licensing, or the cost of governing a larger estate.
+          A decision without a named cost is usually a decision that has not been examined.
+        </p>
+        <p>
+          <strong>Scale is a design input.</strong> Two terabytes a day, 125 terabytes of content, or 250 applications
+          on 25 servers do not change the pattern — they change the failure modes, the testing strategy and the governance
+          you owe the business.
+        </p>
+      </div>
+      <p class="case-nav">
+        <a href="/">← Back to the CV</a>
+        <a href="/engineering">How this site is built →</a>
+      </p>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="wrap footer-inner">
+    <p class="footer-name">Jonathan Valdes <span class="muted">— Azure Cloud Architect, Data &amp; AI Engineer</span></p>
+    <p class="footer-stack">Azure Static Web Apps · managed Functions · Table Storage · Application Insights · Bicep · GitHub Actions.</p>
+    <p class="footer-meta">
+      <span class="footer-live">
+        <span class="live-badge" data-state="unknown">
+          <span class="live-dot" aria-hidden="true"></span>
+          <span class="live-copy">API · checking…</span>
+        </span>
+        <span class="visits-copy">visits · —</span>
+        <a href="/engineering">How this site is built</a>
+      </span>
+    </p>
+  </div>
+</footer>
+
+<script src="/assets/app.js" defer></script>
+</body>
+</html>

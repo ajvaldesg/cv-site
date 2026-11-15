@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Case 03 — Enterprise collaboration platform consolidation | Jonathan Valdes</title>
+<meta name="description" content="Architecture case study: consolidating 250+ web applications across 25 redundant servers into a redesigned collaboration topology with governance, reliability and a reduced licensing footprint." />
+<meta name="author" content="Jonathan Valdes" />
+<meta name="theme-color" content="#0b2545" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="/assets/styles.css" />
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml" />
+</head>
+<body>
+
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="site-header" id="top">
+  <div class="wrap header-inner">
+    <a class="brand" href="/">
+      <span class="brand-mark">JV</span>
+      <span class="brand-text">Jonathan Valdes</span>
+    </a>
+    <nav class="nav" aria-label="Section navigation">
+      <a href="/#profile">Profile</a>
+      <a href="/#experience">Experience</a>
+      <a href="/cases" aria-current="page">Case studies</a>
+      <a href="/engineering">Engineering</a>
+      <a href="/#contact" class="nav-cta">Contact</a>
+      <button class="theme-toggle" id="themeToggle" type="button" aria-label="Toggle color theme" title="Toggle theme">
+        <svg class="icon-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><g stroke-linecap="round"><line x1="12" y1="2.2" x2="12" y2="4.6"/><line x1="12" y1="19.4" x2="12" y2="21.8"/><line x1="2.2" y1="12" x2="4.6" y2="12"/><line x1="19.4" y1="12" x2="21.8" y2="12"/><line x1="5.1" y1="5.1" x2="6.8" y2="6.8"/><line x1="17.2" y1="17.2" x2="18.9" y2="18.9"/><line x1="18.9" y1="5.1" x2="17.2" y2="6.8"/><line x1="6.8" y1="17.2" x2="5.1" y2="18.9"/></g></svg>
+        <svg class="icon-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.2 14.6A8.4 8.4 0 0 1 9.4 3.8a8.6 8.6 0 1 0 10.8 10.8z"/></svg>
+      </button>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+
+  <section class="case-hero">
+    <div class="wrap">
+      <p class="section-kicker">Case 03 · Platform</p>
+      <h1>250 applications on 25 servers: consolidating without losing the business</h1>
+      <p class="case-lede">
+        Twenty-five servers carrying more than 250 web applications is not redundancy — it is duplication that
+        nobody dares remove, because nobody is certain which application still matters. The work was to redesign
+        the topology so that consolidation became safe, and governance became possible.
+      </p>
+      <div class="case-meta">
+        <span>Enterprise collaboration platform</span>
+        <span>250+ web applications</span>
+        <span>25 redundant servers</span>
+        <span>K2 · .NET · SSRS · BDC/BCS</span>
+      </div>
+
+      <div class="fact-grid">
+        <div class="fact"><span class="fact-num">250+</span><span class="fact-label">web applications</span></div>
+        <div class="fact"><span class="fact-num">25</span><span class="fact-label">redundant servers</span></div>
+        <div class="fact"><span class="fact-num">Reduced</span><span class="fact-label">licensing footprint</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="case-section">
+    <div class="wrap case-body">
+      <h2>Context and constraints</h2>
+      <p>
+        The estate had grown by accretion: each initiative added an application, each application added a server,
+        and each server added a licensing line. The result was a multi-server collaboration architecture where
+        reliability was delivered by duplication rather than by design, and where governance meant asking people to
+        stop doing what had always worked.
+      </p>
+      <p>
+        Three constraints shaped everything. The applications had to keep running — this was the platform people
+        used to do their jobs. The workflow and reporting dependencies (K2, .NET applications, SQL Server Reporting
+        Services and BDC/BCS integration into line-of-business systems) could not be treated as replaceable
+        commodities. And any consolidation had to reduce the licensing footprint, or it would not survive its own
+        business case.
+      </p>
+    </div>
+  </section>
+
+  <section class="case-section">
+    <div class="wrap">
+      <h2>Target architecture</h2>
+      <div class="diagram-card">
+        <svg viewBox="0 0 700 470" role="img" aria-labelledby="c3t c3d">
+          <title id="c3t">Consolidated collaboration platform architecture</title>
+          <desc id="c3d">Business users reach a consolidated application tier with a redesigned topology containing dot net web applications, K2 workflow and SQL Server Reporting Services, integrated with line-of-business systems through BDC/BCS. Governance and reliability requirements apply across the tier.</desc>
+          <defs>
+            <marker id="a3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path d="M0 0 L10 5 L0 10 z" fill="#0078d4"/>
+            </marker>
+            <marker id="a3g" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path d="M0 0 L10 5 L0 10 z" fill="#7a869a"/>
+            </marker>
+            <style>
+              .b { fill: #ffffff; stroke: #cbd5e1; stroke-width: 1.2; }
+              .b-app { fill: #e8f1fb; stroke: #0078d4; }
+              .b-base { fill: #f5f7fb; stroke: #cbd5e1; }
+              .t { font: 600 11px Inter, sans-serif; fill: #10192b; }
+              .s { font: 8.8px "JetBrains Mono", monospace; fill: #7a869a; }
+              .grp { fill: none; stroke: #cbd5e1; stroke-width: 1.2; stroke-dasharray: 5 5; }
+              .grp-t { font: 600 8.6px "JetBrains Mono", monospace; fill: #7a869a; letter-spacing: .09em; }
+              .l { stroke: #0078d4; stroke-width: 1.4; fill: none; marker-end: url(#a3); }
+              .l-g { stroke: #7a869a; stroke-width: 1.2; stroke-dasharray: 4 4; fill: none; marker-end: url(#a3g); }
+              .chip { fill: #ffffff; stroke: #cbd5e1; }
+              .chip-t { font: 600 8.4px "JetBrains Mono", monospace; fill: #4a5568; }
+            </style>
+          </defs>
+
+          <!-- users -->
+          <rect class="b" x="12" y="150" width="118" height="58" rx="9"/>
+          <text class="t" x="71" y="176" text-anchor="middle">Business</text>
+          <text class="t" x="71" y="190" text-anchor="middle">users</text>
+          <text class="s" x="71" y="204" text-anchor="middle">day-to-day work</text>
+
+          <!-- consolidated tier -->
+          <rect class="grp" x="164" y="86" width="374" height="212" rx="14"/>
+          <text class="grp-t" x="178" y="104">CONSOLIDATED TIER · REDESIGNED TOPOLOGY</text>
+
+          <rect class="b b-app" x="180" y="112" width="108" height="76" rx="9"/>
+          <text class="t" x="234" y="140" text-anchor="middle">.NET</text>
+          <text class="t" x="234" y="154" text-anchor="middle">web apps</text>
+          <text class="s" x="234" y="172" text-anchor="middle">250+ applications</text>
+
+          <rect class="b b-app" x="300" y="112" width="108" height="76" rx="9"/>
+          <text class="t" x="354" y="140" text-anchor="middle">K2</text>
+          <text class="s" x="354" y="160" text-anchor="middle">workflow</text>
+          <text class="s" x="354" y="174" text-anchor="middle">process automation</text>
+
+          <rect class="b b-app" x="420" y="112" width="108" height="76" rx="9"/>
+          <text class="t" x="474" y="140" text-anchor="middle">SSRS</text>
+          <text class="s" x="474" y="160" text-anchor="middle">reporting</text>
+          <text class="s" x="474" y="174" text-anchor="middle">operational reports</text>
+
+          <rect class="b b-base" x="180" y="204" width="348" height="70" rx="9"/>
+          <text class="t" x="354" y="228" text-anchor="middle">From 25 redundant servers to a consolidated topology</text>
+          <text class="s" x="354" y="246" text-anchor="middle">reliability by design instead of reliability by duplication</text>
+          <text class="s" x="354" y="262" text-anchor="middle">reduced licensing footprint</text>
+
+          <!-- line of business -->
+          <rect class="b" x="566" y="112" width="122" height="90" rx="9"/>
+          <text class="t" x="627" y="140" text-anchor="middle">Line-of-</text>
+          <text class="t" x="627" y="154" text-anchor="middle">business</text>
+          <text class="t" x="627" y="168" text-anchor="middle">systems</text>
+          <text class="s" x="627" y="188" text-anchor="middle">via BDC / BCS</text>
+
+          <!-- governance band -->
+          <rect class="grp" x="12" y="330" width="676" height="116" rx="12"/>
+          <text class="grp-t" x="26" y="348">GOVERNANCE &amp; RELIABILITY</text>
+
+          <rect class="chip" x="28" y="360" width="196" height="34" rx="7"/>
+          <text class="chip-t" x="126" y="381" text-anchor="middle">consolidation standards</text>
+
+          <rect class="chip" x="242" y="360" width="196" height="34" rx="7"/>
+          <text class="chip-t" x="340" y="381" text-anchor="middle">change control</text>
+
+          <rect class="chip" x="456" y="360" width="216" height="34" rx="7"/>
+          <text class="chip-t" x="564" y="381" text-anchor="middle">application ownership</text>
+
+          <text class="s" x="350" y="424" text-anchor="middle">the same requirements that make consolidation safe also make the estate governable</text>
+
+          <!-- links -->
+          <path class="l" d="M130 179 L160 179"/>
+          <path class="l" d="M534 150 L562 150"/>
+          <path class="l-g" d="M350 326 L350 300"/>
+        </svg>
+        <div class="diagram-legend">
+          <span><i></i> Request / integration path</span>
+          <span><i class="dash"></i> Governance applied to the tier</span>
+          <span>Dashed boxes = design and control boundaries</span>
+        </div>
+      </div>
+      <p class="diagram-caption">
+        The redesign keeps the application capabilities the business depends on — .NET applications, K2 workflow,
+        SSRS reporting and BDC/BCS integration — while removing the duplication that made the estate expensive and
+        unreliable. Governance is drawn as a first-class layer because, at this size, it is the only thing that keeps
+        the topology from drifting back to where it started.
+      </p>
+    </div>
+  </section>
+
+  <section class="case-section">
+    <div class="wrap">
+      <h2>Decisions and trade-offs</h2>
+      <div class="decision-list">
+
+        <div class="decision">
+          <h3>Consolidate the topology before consolidating the applications</h3>
+          <p>
+            Removing 25 servers' worth of duplication is a topology problem first: once applications share a
+            designed platform, decommissioning becomes an editorial decision rather than a leap of faith.
+          </p>
+          <p><strong>Accepted cost:</strong> a period where the new platform must host old and new workloads at the
+            same time — the least glamorous phase of any consolidation, and the one that decides whether it works.</p>
+          <div class="tag-row"><span>Reliability</span><span>Risk sequencing</span></div>
+        </div>
+
+        <div class="decision">
+          <h3>Keep the platform capabilities, remove the platform sprawl</h3>
+          <p>
+            K2, .NET, SSRS and BDC/BCS stay because the business processes depend on them. What is removed is the
+            duplication around them, not the capability itself.
+          </p>
+          <p><strong>Accepted cost:</strong> the architecture must respect each technology's operating model instead
+            of forcing a single uniform pattern onto all of them.</p>
+          <div class="tag-row"><span>Business continuity</span><span>Compatibility</span></div>
+        </div>
+
+        <div class="decision">
+          <h3>Governance as a design requirement, not a post-migration clean-up</h3>
+          <p>
+            Ownership, change control and consolidation standards are part of the target state. Without them, a
+            consolidated estate re-fragments the moment the next application arrives.
+          </p>
+          <p><strong>Accepted cost:</strong> slower onboarding for new applications, and a governance model that has
+            to be maintained by people, not by tooling alone.</p>
+          <div class="tag-row"><span>Governance</span><span>Sustainability</span></div>
+        </div>
+
+        <div class="decision">
+          <h3>Licensing reduction as an architectural outcome</h3>
+          <p>
+            Fewer redundant servers and a consolidated topology reduce the licensing footprint — a business result
+            that follows from the architecture rather than from a procurement negotiation.
+          </p>
+          <p><strong>Accepted cost:</strong> the consolidation must be complete enough to actually retire capacity;
+            partial consolidation keeps the cost and adds the transition overhead.</p>
+          <div class="tag-row"><span>Business impact</span><span>Cost</span></div>
+        </div>
+
+      </div>
+
+      <table class="tradeoff-table">
+        <thead>
+          <tr><th>Decision</th><th>What was given up</th><th>Why it was still right</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Redesign topology first</td>
+            <td>A faster, more visible "lift and shift" narrative</td>
+            <td>Makes decommissioning and consolidation safe instead of heroic</td>
+          </tr>
+          <tr>
+            <td>Preserve K2 / .NET / SSRS / BDC-BCS</td>
+            <td>The simplicity of a single homogeneous stack</td>
+            <td>Those capabilities carry live business processes</td>
+          </tr>
+          <tr>
+            <td>Governance inside the target state</td>
+            <td>Short-term delivery speed</td>
+            <td>Prevents the estate from re-fragmenting after the project ends</td>
+          </tr>
+          <tr>
+            <td>Licensing reduction as a goal</td>
+            <td>Tolerance for partial consolidation</td>
+            <td>Without retirement of capacity, the business case does not hold</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="case-section">
+    <div class="wrap case-body">
+      <h2>Governance, security and scale</h2>
+      <p>
+        <strong>Reliability was the point of the redesign.</strong> Twenty-five servers is not resilience; it is a
+        collection of single points of failure with different patch levels. A designed topology makes failure
+        behaviour something the architecture specifies, rather than something the operations team discovers.
+      </p>
+      <p>
+        <strong>Governance protected the investment.</strong> Consolidation standards and application ownership are
+        what stop the next ten applications from recreating the problem, and they are also what makes change control
+        meaningful: you cannot govern an estate you cannot enumerate.
+      </p>
+      <p>
+        <strong>Scale defined the sequencing.</strong> With 250+ applications, consolidation is not a cut-over; it is
+        a programme of decisions about what runs where, in what order, with which dependencies verified. The
+        architecture's job was to make each of those decisions safe to take.
+      </p>
+
+      <h2 style="margin-top:28px">What this case demonstrates</h2>
+      <p>
+        Technical leadership on a consolidation that could not afford a big-bang failure: keeping the capabilities
+        the business depends on, removing the duplication around them, and building governance into the target
+        state so the result holds after the project ends. The measurable business outcome is structural — a reduced
+        licensing footprint that follows from retiring redundant capacity.
+      </p>
+      <p class="note-inline">
+        Scope note: 250+ applications, 25 redundant servers and the reduced licensing footprint are the recorded
+        facts for this engagement. No percentage savings, cost figures, team sizes or timelines are asserted.
+      </p>
+
+      <p class="case-nav">
+        <a href="/cases/enterprise-content-identity">← Case 02: content &amp; identity</a>
+        <a href="/cases">All case studies →</a>
+      </p>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="wrap footer-inner">
+    <p class="footer-name">Jonathan Valdes <span class="muted">— Azure Cloud Architect, Data &amp; AI Engineer</span></p>
+    <p class="footer-stack">Azure Static Web Apps · managed Functions · Table Storage · Application Insights · Bicep · GitHub Actions.</p>
+    <p class="footer-meta">
+      <span class="footer-live">
+        <span class="live-badge" data-state="unknown"><span class="live-dot" aria-hidden="true"></span><span class="live-copy">API · checking…</span></span>
+        <span class="visits-copy">visits · —</span>
+        <a href="/engineering">How this site is built</a>
+      </span>
+    </p>
+  </div>
+</footer>
+
+<script src="/assets/app.js" defer></script>
+</body>
+</html>

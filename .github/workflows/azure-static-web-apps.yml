@@ -6,6 +6,7 @@ on:
     paths:
       - "index.html"
       - "engineering/**"
+      - "cases/**"
       - "assets/**"
       - "api/**"
       - "staticwebapp.config.json"

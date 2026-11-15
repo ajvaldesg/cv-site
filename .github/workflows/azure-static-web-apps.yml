@@ -5,8 +5,11 @@ on:
     branches: [main]
     paths:
       - "index.html"
+      - "engineering/**"
       - "assets/**"
+      - "api/**"
       - "staticwebapp.config.json"
+      - "infra/**"
       - ".github/workflows/azure-static-web-apps.yml"
   pull_request:
     types: [opened, synchronize, reopened, closed]
@@ -35,7 +38,7 @@ jobs:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           action: upload
           app_location: "/"
-          api_location: ""
+          api_location: "api"
           output_location: ""
 
   close_pull_request:

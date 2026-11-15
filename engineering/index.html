@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>How this site is built — Jonathan Valdes</title>
+<meta name="description" content="Architecture notes for jonathanvaldes.dev: Azure Static Web Apps, serverless Functions, Table Storage, Application Insights and GitHub Actions — with the reasoning behind each decision." />
+<meta name="author" content="Jonathan Valdes" />
+<meta name="theme-color" content="#0b2545" />
+<meta name="robots" content="index, follow" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="/assets/styles.css" />
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml" />
+</head>
+<body>
+
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="site-header" id="top">
+  <div class="wrap header-inner">
+    <a class="brand" href="/">
+      <span class="brand-mark">JV</span>
+      <span class="brand-text">Jonathan Valdes</span>
+    </a>
+
+    <nav class="nav" aria-label="Section navigation">
+      <a href="/#profile">Profile</a>
+      <a href="/#competencies">Competencies</a>
+      <a href="/#experience">Experience</a>
+      <a href="/engineering" aria-current="page">Engineering</a>
+      <a href="/#contact" class="nav-cta">Contact</a>
+      <button class="theme-toggle" id="themeToggle" type="button" aria-label="Toggle color theme" title="Toggle theme">
+        <svg class="icon-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><g stroke-linecap="round"><line x1="12" y1="2.2" x2="12" y2="4.6"/><line x1="12" y1="19.4" x2="12" y2="21.8"/><line x1="2.2" y1="12" x2="4.6" y2="12"/><line x1="19.4" y1="12" x2="21.8" y2="12"/><line x1="5.1" y1="5.1" x2="6.8" y2="6.8"/><line x1="17.2" y1="17.2" x2="18.9" y2="18.9"/><line x1="18.9" y1="5.1" x2="17.2" y2="6.8"/><line x1="6.8" y1="17.2" x2="5.1" y2="18.9"/></g></svg>
+        <svg class="icon-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.2 14.6A8.4 8.4 0 0 1 9.4 3.8a8.6 8.6 0 1 0 10.8 10.8z"/></svg>
+      </button>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+
+  <section class="page-head">
+    <div class="wrap">
+      <p class="section-kicker">Engineering notes</p>
+      <h1>This CV is a running system, not a PDF.</h1>
+      <p class="lede">
+        Everything below is live in production and public: the code, the pipeline, the API and the telemetry.
+        It is a small system, but it is a <strong>complete</strong> one — edge delivery, serverless compute,
+        a persistent store, observability and infrastructure as code.
+      </p>
+      <p class="footer-live" style="margin-top:18px">
+        <span class="live-badge" id="liveBadge" data-state="unknown">
+          <span class="live-dot" aria-hidden="true"></span>
+          <span id="liveText">API · checking…</span>
+        </span>
+        <span id="visitsText">visits · —</span>
+        <a href="https://github.com/ajvaldesg/cv-site" target="_blank" rel="noopener noreferrer">Source on GitHub ↗</a>
+      </p>
+    </div>
+  </section>
+
+  <section class="eng-section">
+    <div class="wrap eng-grid">
+      <div>
+        <h2>Architecture</h2>
+        <p>
+          A browser requests the site from Azure's global edge. Static assets come from the CDN node closest to the
+          visitor; anything under <code>/api/*</code> is routed to managed Azure Functions running in the same
+          Static Web App. Those functions read and write Azure Table Storage and emit traces and metrics to
+          Application Insights. Deployments are triggered by a push to <code>main</code> and built by GitHub Actions.
+        </p>
+        <div class="eng-card" style="margin-top:14px">
+          <h3>Stack</h3>
+          <div class="stack-chips">
+            <span>Azure Static Web Apps (Free)</span>
+            <span>Azure Functions · Node 20</span>
+            <span>Azure Table Storage</span>
+            <span>Application Insights</span>
+            <span>GitHub Actions</span>
+            <span>Bicep</span>
+            <span>No framework · no build step</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="diagram-wrap">
+        <svg viewBox="0 0 520 340" role="img" aria-labelledby="diagTitle diagDesc">
+          <title id="diagTitle">Request flow of the CV site</title>
+          <desc id="diagDesc">Browser to Azure edge CDN for static assets, static web app routes /api to serverless functions which write to Table Storage and send telemetry to Application Insights; GitHub Actions deploys the whole thing.</desc>
+          <defs>
+            <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path d="M0 0 L10 5 L0 10 z" fill="#0078d4"/>
+            </marker>
+            <style>
+              .box { fill: #ffffff; stroke: #cbd5e1; stroke-width: 1.2; rx: 10; }
+              .box-api { fill: #e8f1fb; stroke: #0078d4; }
+              .lbl { font: 600 12px Inter, sans-serif; fill: #10192b; }
+              .sub { font: 10px "JetBrains Mono", monospace; fill: #7a869a; }
+              .ln { stroke: #0078d4; stroke-width: 1.4; fill: none; marker-end: url(#arrow); }
+              .ln-dash { stroke: #7a869a; stroke-width: 1.2; stroke-dasharray: 4 4; fill: none; marker-end: url(#arrow); }
+              .grp { fill: none; stroke: #cbd5e1; stroke-width: 1.2; stroke-dasharray: 5 5; rx: 14; }
+              .grp-t { font: 600 9.5px "JetBrains Mono", monospace; fill: #7a869a; letter-spacing: .08em; }
+            </style>
+          </defs>
+
+          <rect class="box" x="14" y="126" width="92" height="52"/>
+          <text class="lbl" x="60" y="148" text-anchor="middle">Browser</text>
+          <text class="sub" x="60" y="164" text-anchor="middle">any device</text>
+
+          <rect class="grp" x="128" y="26" width="252" height="270"/>
+          <text class="grp-t" x="140" y="44">AZURE STATIC WEB APPS · FREE</text>
+
+          <rect class="box" x="146" y="58" width="216" height="46"/>
+          <text class="lbl" x="254" y="78" text-anchor="middle">Global edge CDN</text>
+          <text class="sub" x="254" y="94" text-anchor="middle">static assets · TLS · custom headers</text>
+
+          <rect class="box box-api" x="146" y="128" width="216" height="46"/>
+          <text class="lbl" x="254" y="148" text-anchor="middle">/api/* → managed Functions</text>
+          <text class="sub" x="254" y="164" text-anchor="middle">Node 20 · health · visits · contact</text>
+
+          <rect class="box" x="146" y="204" width="216" height="0.1"/>
+
+          <rect class="box" x="402" y="82" width="104" height="52"/>
+          <text class="lbl" x="454" y="104" text-anchor="middle">Table Storage</text>
+          <text class="sub" x="454" y="120" text-anchor="middle">counters · messages</text>
+
+          <rect class="box" x="402" y="176" width="104" height="52"/>
+          <text class="lbl" x="454" y="198" text-anchor="middle">App Insights</text>
+          <text class="sub" x="454" y="214" text-anchor="middle">traces · metrics</text>
+
+          <rect class="box" x="146" y="238" width="216" height="44"/>
+          <text class="lbl" x="254" y="258" text-anchor="middle">GitHub Actions</text>
+          <text class="sub" x="254" y="274" text-anchor="middle">build + deploy on push to main</text>
+
+          <path class="ln" d="M106 140 L142 82"/>
+          <path class="ln" d="M106 164 L142 150"/>
+          <path class="ln" d="M362 146 L398 116"/>
+          <path class="ln" d="M362 158 L398 196"/>
+          <path class="ln-dash" d="M254 238 L254 178"/>
+          <path class="ln-dash" d="M254 300 L254 306" opacity="0"/>
+        </svg>
+        <p class="diagram-caption">
+          Blue solid = request path. Dashed = deployment path (build → edge + functions).
+          All of it defined in <code>infra/main.bicep</code> and deployed by the workflow in the repo.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="eng-section">
+    <div class="wrap">
+      <h2>Decisions worth defending</h2>
+      <p class="muted" style="font-size:.9rem">Short ADRs — the reason each choice is right <em>for this workload</em>, and what it costs.</p>
+      <div class="adr-list" style="margin-top:18px">
+        <div class="adr">
+          <h3>ADR-01 · Static Web Apps over App Service or AKS</h3>
+          <p class="adr-decision">One resource serves the frontend from the edge <em>and</em> hosts the API as managed functions.</p>
+          <p class="adr-why">Why: zero servers to patch, TLS and CDN included, and the cost at this scale is literally $0. A container platform here would be infrastructure for its own sake.</p>
+        </div>
+        <div class="adr">
+          <h3>ADR-02 · Table Storage over Cosmos DB or SQL</h3>
+          <p class="adr-decision">A counter and a contact inbox are key-value workloads: one partition, one row per item.</p>
+          <p class="adr-why">Why: pennies per month, no RU provisioning, no cold-start penalty. Cosmos would be the right call if I needed multi-region writes or sub-10 ms p99 on a hot path — I don't.</p>
+        </div>
+        <div class="adr">
+          <h3>ADR-03 · No SPA framework</h3>
+          <p class="adr-decision">Plain HTML, CSS and ~150 lines of JavaScript. No React, no bundler, no <code>node_modules</code> on the frontend.</p>
+          <p class="adr-why">Why: the page renders before the JS parses, works with JS disabled (minus the counter/form), and there is no dependency supply chain to audit. A CV does not need a virtual DOM.</p>
+        </div>
+        <div class="adr">
+          <h3>ADR-04 · Degrade, never break</h3>
+          <p class="adr-decision">Every API call is wrapped: if storage is unreachable or the function is cold, the page still renders and the badge simply says so.</p>
+          <p class="adr-why">Why: the primary job of this site is to be readable. Telemetry niceties must never be able to take the content down.</p>
+        </div>
+        <div class="adr">
+          <h3>ADR-05 · Secrets out of the repo</h3>
+          <p class="adr-decision">Deployment token lives in GitHub Actions secrets; the storage key lives in Static Web App app settings. The repo is public and contains neither.</p>
+          <p class="adr-why">Why: a portfolio repo is meant to be read. Anything that must stay private stays out of it — and Bicep is written so no secret ever lands in deployment output.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="eng-section">
+    <div class="wrap eng-grid">
+      <div>
+        <h2>Live API</h2>
+        <p>Same-origin, no keys, no CORS preflight. These are real endpoints you can call right now:</p>
+        <div class="endpoint-list">
+          <div class="endpoint"><span class="method">GET</span><a href="/api/health">/api/health</a><span class="desc">liveness, runtime, region, uptime, integration flags</span></div>
+          <div class="endpoint"><span class="method">GET</span><a href="/api/visits">/api/visits</a><span class="desc">increments and returns the visit counter</span></div>
+          <div class="endpoint"><span class="method">POST</span><span>/api/contact</span><span class="desc">validates and stores a message (name, email, message)</span></div>
+        </div>
+        <p class="diagram-caption" style="margin-top:14px">
+          Observability: every invocation emits traces to Application Insights (30-day retention) — failures,
+          latency and dependency calls included.
+        </p>
+      </div>
+      <div class="eng-card">
+        <h3>What this page is really showing</h3>
+        <p>
+          The claim "I know Azure" is cheap. A public repo with Bicep, a workflow that deploys on push, a serverless
+          API with a real data store, telemetry wired in, and an availability signal on the page — that is the
+          difference between <em>describing</em> experience and <em>demonstrating</em> it.
+        </p>
+        <p>
+          Everything is small on purpose: the point is that every layer is visible and none of it is decorative.
+        </p>
+        <p><a href="/">← Back to the CV</a></p>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="wrap footer-inner">
+    <p class="footer-name">Jonathan Valdes <span class="muted">— Azure Cloud Architect, Data &amp; AI Engineer</span></p>
+    <p class="footer-stack">
+      Azure Static Web Apps · managed Functions · Table Storage · Application Insights · Bicep · GitHub Actions.
+    </p>
+    <p class="footer-meta">
+      <span class="footer-live">
+        <span class="live-badge" data-state="unknown">
+          <span class="live-dot" aria-hidden="true"></span>
+          <span class="live-copy">API · checking…</span>
+        </span>
+        <span class="visits-copy">visits · —</span>
+        <a href="/engineering">How this site is built</a>
+      </span>
+    </p>
+  </div>
+</footer>
+
+<script src="/assets/app.js" defer></script>
+</body>
+</html>

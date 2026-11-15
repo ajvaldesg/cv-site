@@ -1,0 +1,17 @@
+{
+  "name": "cv-site-api",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Serverless API for the CV site — health, visit counter and contact form (Azure Static Web Apps managed functions)",
+  "main": "src/index.js",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "start": "func start"
+  },
+  "dependencies": {
+    "@azure/data-tables": "^13.3.0",
+    "@azure/functions": "^4.5.0"
+  }
+}

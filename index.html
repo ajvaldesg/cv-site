@@ -35,6 +35,7 @@
       <a href="#competencies">Competencies</a>
       <a href="#experience">Experience</a>
       <a href="#credentials">Credentials</a>
+      <a href="/engineering">Engineering</a>
       <a href="#contact" class="nav-cta">Contact</a>
       <button class="theme-toggle" id="themeToggle" type="button" aria-label="Toggle color theme" title="Toggle theme">
         <svg class="icon-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><g stroke-linecap="round"><line x1="12" y1="2.2" x2="12" y2="4.6"/><line x1="12" y1="19.4" x2="12" y2="21.8"/><line x1="2.2" y1="12" x2="4.6" y2="12"/><line x1="19.4" y1="12" x2="21.8" y2="12"/><line x1="5.1" y1="5.1" x2="6.8" y2="6.8"/><line x1="17.2" y1="17.2" x2="18.9" y2="18.9"/><line x1="18.9" y1="5.1" x2="17.2" y2="6.8"/><line x1="6.8" y1="17.2" x2="5.1" y2="18.9"/></g></svg>
@@ -469,6 +470,17 @@
             Show US phone
           </button>
         </div>
+
+        <form class="contact-form" id="contactForm" method="post" action="/api/contact" novalidate>
+          <label for="cf-name">Name</label>
+          <input id="cf-name" name="name" type="text" autocomplete="name" required maxlength="120" placeholder="Your name" />
+          <label for="cf-email">Email</label>
+          <input id="cf-email" name="email" type="email" autocomplete="email" required maxlength="160" placeholder="you@company.com" />
+          <label for="cf-message">Message</label>
+          <textarea id="cf-message" name="message" required maxlength="4000" placeholder="What would you like to talk about?"></textarea>
+          <button class="btn btn-primary" type="submit">Send message</button>
+          <p class="form-note" id="formNote" role="status" aria-live="polite">Goes straight to my inbox — no third-party forms, no tracking.</p>
+        </form>
       </div>
     </div>
   </section>
@@ -482,7 +494,17 @@
       Built as a static site and served from <strong>Azure Static Web Apps</strong> with CI/CD via
       <strong>GitHub Actions</strong> — no servers, TLS included, edge-distributed.
     </p>
-    <p class="footer-meta"><span id="year">2026</span> · <a href="#top">Back to top ↑</a></p>
+    <p class="footer-meta">
+      <span class="footer-live">
+        <span class="live-badge" data-state="unknown">
+          <span class="live-dot" aria-hidden="true"></span>
+          <span class="live-copy">API · checking…</span>
+        </span>
+        <span class="visits-copy">visits · —</span>
+        <a href="/engineering">How this site is built</a>
+        <span class="muted"><span id="year">2026</span> · <a href="#top">Back to top ↑</a></span>
+      </span>
+    </p>
   </div>
 </footer>
 

@@ -104,6 +104,102 @@
     });
   }
 
+  /* ---------- Live API badge + visit counter ---------- */
+  function setBadge(state, text) {
+    document.querySelectorAll(".live-badge").forEach((badge) => {
+      badge.setAttribute("data-state", state);
+      const copy = badge.querySelector(".live-copy, #liveText");
+      if (copy) copy.textContent = text;
+    });
+  }
+
+  function setVisits(text) {
+    document.querySelectorAll(".visits-copy, #visitsText").forEach((el) => {
+      el.textContent = text;
+    });
+  }
+
+  function initLiveStatus() {
+    if (!document.querySelector(".live-badge")) return;
+
+    const started = performance.now();
+    fetch("/api/health", { headers: { accept: "application/json" } })
+      .then((r) => (r.ok ? r.json() : Promise.reject(new Error("bad status"))))
+      .then((data) => {
+        const ms = Math.round(performance.now() - started);
+        const region = data && data.region ? " · " + data.region : "";
+        setBadge("ok", "API · " + ms + " ms" + region);
+      })
+      .catch(() => setBadge("down", "API · unreachable"));
+
+    fetch("/api/visits", { headers: { accept: "application/json" } })
+      .then((r) => (r.ok ? r.json() : Promise.reject(new Error("bad status"))))
+      .then((data) => {
+        if (data && typeof data.count === "number") {
+          setVisits("visits · " + data.count.toLocaleString("en-US"));
+        } else {
+          setVisits("visits · n/a");
+        }
+      })
+      .catch(() => setVisits("visits · n/a"));
+  }
+
+  /* ---------- Contact form ---------- */
+  function initContactForm() {
+    const form = document.getElementById("contactForm");
+    if (!form) return;
+    const note = document.getElementById("formNote");
+    const btn = form.querySelector("button[type=submit]");
+
+    const say = (msg, state) => {
+      if (!note) return;
+      note.textContent = msg;
+      note.setAttribute("data-state", state || "");
+    };
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const fields = form.elements;
+      const data = {
+        name: fields.name.value.trim(),
+        email: fields.email.value.trim(),
+        message: fields.message.value.trim(),
+      };
+
+      if (data.name.length < 2) return say("Please add your name.", "error");
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(data.email)) return say("That email does not look right.", "error");
+      if (data.message.length < 10) return say("Tell me a bit more (10+ characters).", "error");
+
+      const original = btn ? btn.textContent : "";
+      if (btn) { btn.disabled = true; btn.textContent = "Sending…"; }
+      say("Sending…", "");
+
+      try {
+        const res = await fetch("/api/contact", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify(data),
+        });
+        const body = await res.json().catch(() => ({}));
+        if (!res.ok || !body.ok) {
+          const map = {
+            name_required: "Please add your name.",
+            email_invalid: "That email does not look right.",
+            message_too_short: "Tell me a bit more (10+ characters).",
+            storage_not_configured: "The inbox is being configured — email me directly meanwhile.",
+          };
+          throw new Error(map[body.error] || "Something went wrong. Try email instead.");
+        }
+        form.reset();
+        say("Message received — I will get back to you. Thank you!", "ok");
+      } catch (err) {
+        say(err && err.message ? err.message : "Something went wrong. Try email instead.", "error");
+      } finally {
+        if (btn) { btn.disabled = false; btn.textContent = original; }
+      }
+    });
+  }
+
   /* ---------- Year ---------- */
   function initYear() {
     const y = document.getElementById("year");
@@ -115,6 +211,8 @@
   initHeader();
   initPrint();
   initPhoneReveal();
+  initLiveStatus();
+  initContactForm();
   initYear();
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", initReveal);
